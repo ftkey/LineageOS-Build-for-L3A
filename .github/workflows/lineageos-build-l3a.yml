@@ -24,37 +24,37 @@ jobs:
           echo "export USE_CCACHE=1" >> ~/.bashrc
           echo "export CCACHE_EXEC=/usr/bin/ccache" >> ~/.bashrc
           source ~/.bashrc
-          ccache -M 50G  # 设置缓存大小为 50GB
+          ccache -M 25G  # 设置缓存大小为 50GB
 
 
       - name: Install the `repo` command
         run: |
-          mkdir -p ~/bin
-          curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
-          chmod a+x ~/bin/repo
+          mkdir -p /mnt/bin
+          curl https://storage.googleapis.com/git-repo-downloads/repo > /mnt/bin/repo
+          chmod a+x /mnt/bin/repo
 
       - name: Initialize LineageOS Source Repository
         run: |
-          mkdir -p ~/android/lineage
-          cd ~/android/lineage
-          ~/bin/repo init -u https://github.com/LineageOS/android.git -b $BRANCH --git-lfs --no-clone-bundle
-          ~/bin/repo sync
+          mkdir -p /mnt/android/lineage
+          cd /mnt/android/lineage
+          /mnt/bin/repo init -u https://github.com/LineageOS/android.git -b $BRANCH --git-lfs --no-clone-bundle
+          /mnt/bin/repo sync
 
       - name: Prepare Device-Specific Code
         run: |
-          cd ~/android/lineage
+          cd /mnt/android/lineage
           source build/envsetup.sh
           breakfast $DEVICE
           lunch lineage_$DEVICE-userdebug
 
       - name: Extract Proprietary Blobs
         run: |
-          cd ~/android/lineage/device/askey/wade
+          cd /mnt/android/lineage/device/askey/wade
           ./extract-files.sh  # 或者 ./extract-files.py，根据实际情况选择
 
       - name: Start the Build
         run: |
-          cd ~/android/lineage
+          cd /mnt/android/lineage
           croot
           brunch wade
           
@@ -63,4 +63,4 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: LineageOS-$DEVICE
-          path: ~/android/lineage/out/target/product/$DEVICE/
+          path: /mnt/android/lineage/out/target/product/$DEVICE/
