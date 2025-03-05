@@ -15,7 +15,7 @@ jobs:
       - name: Machine Information
         run: |
           sudo mkdir /mnt/atv
-          sudo chmod 755 /mnt/atv
+          sudo chmod -R 777 /mnt/atv
           ls -ld /mnt/atv
           cd /mnt/atv
           echo "======================="
