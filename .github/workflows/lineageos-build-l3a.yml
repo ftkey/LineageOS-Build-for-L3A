@@ -1,0 +1,69 @@
+name: LineageOS 22.1 Build for L3A
+permissions: write-all
+
+on:
+  push:
+    branches:
+      - main  # 触发编译的分支
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DEVICE: wade
+      BRANCH: lineage-22.1
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v3
+
+      - name: Set Up Environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bc bison build-essential ccache curl flex g++-multilib gcc-multilib git git-lfs gnupg gperf imagemagick lib32readline-dev lib32z1-dev libelf-dev liblz4-tool lz4 libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev
+          sudo apt-get install -y openjdk-11-jdk  # JDK for LineageOS 22.1
+          sudo apt-get install -y python-is-python3  # Python 3 for LineageOS 22.1
+          echo "export USE_CCACHE=1" >> ~/.bashrc
+          echo "export CCACHE_EXEC=/usr/bin/ccache" >> ~/.bashrc
+          source ~/.bashrc
+          ccache -M 50G  # 设置缓存大小为 50GB
+
+      - name: Install the `repo` command
+        run: |
+          mkdir -p ~/bin
+          curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+          chmod a+x ~/bin/repo
+          export PATH=~/bin:$PATH
+
+      - name: Initialize LineageOS Source Repository
+        run: |
+          mkdir -p ~/android/lineage
+          cd ~/android/lineage
+          repo init -u https://github.com/LineageOS/android.git -b $BRANCH --git-lfs --no-clone-bundle
+          repo sync
+
+      - name: Prepare Device-Specific Code
+        run: |
+          cd ~/android/lineage
+          source build/envsetup.sh
+          breakfast $DEVICE
+          lunch lineage_$DEVICE-userdebug
+
+      - name: Extract Proprietary Blobs
+        run: |
+          cd ~/android/lineage/device/askey/wade
+          ./extract-files.sh  # 或者 ./extract-files.py，根据实际情况选择
+
+      - name: Start the Build
+        run: |
+          cd ~/android/lineage
+          croot
+          brunch wade
+          
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: LineageOS-$DEVICE
+          path: ~/android/lineage/out/target/product/$DEVICE/
