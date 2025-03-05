@@ -14,7 +14,8 @@ jobs:
     steps:
       - name: Machine Information
         run: |
-          cd /mnt
+          mkdir /mnt/atv
+          cd /mnt/atv
           echo "======================="
           lscpu | grep -E "name|Core|Thread"
           echo "======================="
@@ -40,32 +41,32 @@ jobs:
 
       - name: Install the `repo` command
         run: |
-          mkdir -p /mnt/bin
-          curl https://storage.googleapis.com/git-repo-downloads/repo > /mnt/bin/repo
-          chmod a+x /mnt/bin/repo
+          mkdir -p /mnt/atv/bin
+          curl https://storage.googleapis.com/git-repo-downloads/repo > /mnt/atv/bin/repo
+          chmod a+x /mnt/atv/bin/repo
 
       - name: Initialize LineageOS Source Repository
         run: |
-          mkdir -p /mnt/android/lineage
-          cd /mnt/android/lineage
-          /mnt/bin/repo init -u https://github.com/LineageOS/android.git -b $BRANCH --git-lfs --no-clone-bundle
-          /mnt/bin/repo sync
+          mkdir -p /mnt/atv/android/lineage
+          cd /mnt/atv/android/lineage
+          /mnt/atv/bin/repo init -u https://github.com/LineageOS/android.git -b $BRANCH --git-lfs --no-clone-bundle
+          /mnt/atv/bin/repo sync
 
       - name: Prepare Device-Specific Code
         run: |
-          cd /mnt/android/lineage
+          cd /mnt/atv/android/lineage
           source build/envsetup.sh
           breakfast $DEVICE
           lunch lineage_$DEVICE-userdebug
 
       - name: Extract Proprietary Blobs
         run: |
-          cd /mnt/android/lineage/device/askey/wade
+          cd /mnt/atv/android/lineage/device/askey/wade
           ./extract-files.sh  # 或者 ./extract-files.py，根据实际情况选择
 
       - name: Start the Build
         run: |
-          cd /mnt/android/lineage
+          cd /mnt/atv/android/lineage
           croot
           brunch wade
           
@@ -74,4 +75,4 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: LineageOS-$DEVICE
-          path: /mnt/android/lineage/out/target/product/$DEVICE/
+          path: /mnt/atv/android/lineage/out/target/product/$DEVICE/
