@@ -15,6 +15,8 @@ jobs:
       - name: Machine Information
         run: |
           sudo mkdir /mnt/atv
+          chmod 755 /mnt/atv
+          ls -ld /mnt/atv
           cd /mnt/atv
           echo "======================="
           lscpu | grep -E "name|Core|Thread"
