@@ -60,7 +60,7 @@ jobs:
           
 
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@main
         with:
           name: LineageOS-$DEVICE
           path: ~/android/lineage/out/target/product/$DEVICE/
