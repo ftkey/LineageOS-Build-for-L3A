@@ -41,13 +41,13 @@ jobs:
 
       - name: Install the `repo` command
         run: |
-          mkdir -p /mnt/atv/bin
+          sudo mkdir -p /mnt/atv/bin
           curl https://storage.googleapis.com/git-repo-downloads/repo > /mnt/atv/bin/repo
           chmod a+x /mnt/atv/bin/repo
 
       - name: Initialize LineageOS Source Repository
         run: |
-          mkdir -p /mnt/atv/android/lineage
+          sudo mkdir -p /mnt/atv/android/lineage
           cd /mnt/atv/android/lineage
           /mnt/atv/bin/repo init -u https://github.com/LineageOS/android.git -b $BRANCH --git-lfs --no-clone-bundle
           /mnt/atv/bin/repo sync
