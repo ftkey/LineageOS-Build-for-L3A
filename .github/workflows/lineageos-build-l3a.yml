@@ -2,9 +2,6 @@ name: LineageOS 22.1 Build for L3A
 permissions: write-all
 
 on:
-  push:
-    branches:
-      - main  # 触发编译的分支
   workflow_dispatch:  # 手动触发
 
 jobs:
@@ -16,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@master
 
       - name: Set Up Environment
         run: |
