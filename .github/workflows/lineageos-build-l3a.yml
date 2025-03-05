@@ -32,14 +32,13 @@ jobs:
           mkdir -p ~/bin
           curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
           chmod a+x ~/bin/repo
-          export PATH=~/bin:$PATH
 
       - name: Initialize LineageOS Source Repository
         run: |
           mkdir -p ~/android/lineage
           cd ~/android/lineage
-          repo init -u https://github.com/LineageOS/android.git -b $BRANCH --git-lfs --no-clone-bundle
-          repo sync
+          ~/bin/repo init -u https://github.com/LineageOS/android.git -b $BRANCH --git-lfs --no-clone-bundle
+          ~/bin/repo sync
 
       - name: Prepare Device-Specific Code
         run: |
