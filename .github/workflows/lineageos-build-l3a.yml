@@ -15,7 +15,7 @@ jobs:
       - name: Machine Information
         run: |
           sudo mkdir /mnt/atv
-          chmod 755 /mnt/atv
+          sudo chmod 755 /mnt/atv
           ls -ld /mnt/atv
           cd /mnt/atv
           echo "======================="
@@ -43,13 +43,13 @@ jobs:
 
       - name: Install the `repo` command
         run: |
-          sudo mkdir -p /mnt/atv/bin
+          mkdir -p /mnt/atv/bin
           curl https://storage.googleapis.com/git-repo-downloads/repo > /mnt/atv/bin/repo
           chmod a+x /mnt/atv/bin/repo
 
       - name: Initialize LineageOS Source Repository
         run: |
-          sudo mkdir -p /mnt/atv/android/lineage
+          mkdir -p /mnt/atv/android/lineage
           cd /mnt/atv/android/lineage
           /mnt/atv/bin/repo init -u https://github.com/LineageOS/android.git -b $BRANCH --git-lfs --no-clone-bundle
           /mnt/atv/bin/repo sync
