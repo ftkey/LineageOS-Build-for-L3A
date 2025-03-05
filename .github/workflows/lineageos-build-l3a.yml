@@ -12,6 +12,17 @@ jobs:
       BRANCH: lineage-22.1
 
     steps:
+      - name: Machine Information
+        run: |
+          cd /mnt
+          echo "======================="
+          lscpu | grep -E "name|Core|Thread"
+          echo "======================="
+          df -h
+          echo "======================="
+          du -h --max-depth=1
+          echo "======================="
+          
       - name: Checkout repository
         uses: actions/checkout@main
         
